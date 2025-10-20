@@ -9,35 +9,38 @@ void fileAdd(const std::string &fileName) {
         fs::remove_all("./.minigit/addedFiles");
         fs::create_directory("./.minigit/addedFiles");
 
-        std::string path = ".";
+        for (const auto &entry : fs::recursive_directory_iterator(".")) {
+            const auto &path = entry.path();
 
-        for (const auto &entry : fs::recursive_directory_iterator(path)) {
             if (entry.path().string().find("/.git") != std::string::npos ||
                 entry.path().string().find("/.minigit") != std::string::npos) {
                 continue;
             }
 
-            if (fs::is_directory(entry.path())) {
-                fs::create_directories((fs::path)("./.minigit/addedFiles") /
-                                       entry.path());
-                continue;
-            }
+            fs::path relativePath = fs::relative(entry.path(), ".");
+            fs::path targetPath =
+                fs::path("./.minigit/addedFiles") / relativePath;
 
-            fs::copy_file(entry.path(),
-                          ((fs::path) "./.minigit/addedFiles") / entry.path());
+            if (fs::is_directory(path)) {
+                fs::create_directories(targetPath);
+            } else if (fs::is_regular_file(path)) {
+                fs::copy_file(path, targetPath,
+                              fs::copy_options::overwrite_existing);
+            }
         }
 
         return;
     }
 
     if (!fs::exists(fileName)) {
-        std::cout << "File doesn't exist";
+        std::cout << "File: " << fileName << " doesn't exist";
         return;
     }
-    if (fs::exists(".minigit/addedFiles/" + fileName)) {
-        fs::remove(".minigit/addedFiles/" + fileName);
-    }
-    fs::copy_file(fileName, ".minigit/addedFiles/" + fileName);
+
+    fs::path dest = fs::path(".minigit/addedFiles") / fileName;
+
+    fs::create_directories(dest.parent_path());
+    fs::copy_file(fileName, dest, fs::copy_options::overwrite_existing);
 
     std::cout << "File: " << fileName << " Added\n";
 }
