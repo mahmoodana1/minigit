@@ -12,12 +12,12 @@ void fileAdd(const std::string &fileName) {
         for (const auto &entry : fs::recursive_directory_iterator(".")) {
             const auto &path = entry.path();
 
-            if (entry.path().string().find("/.git") != std::string::npos ||
-                entry.path().string().find("/.minigit") != std::string::npos) {
+            if (path.string().find("/.git") != std::string::npos ||
+                path.string().find("/.minigit") != std::string::npos) {
                 continue;
             }
 
-            fs::path relativePath = fs::relative(entry.path(), ".");
+            fs::path relativePath = fs::relative(path, ".");
             fs::path targetPath =
                 fs::path("./.minigit/addedFiles") / relativePath;
 
@@ -26,6 +26,8 @@ void fileAdd(const std::string &fileName) {
             } else if (fs::is_regular_file(path)) {
                 fs::copy_file(path, targetPath,
                               fs::copy_options::overwrite_existing);
+
+                std::cout << relativePath.string() << " ADDED.\n";
             }
         }
 
