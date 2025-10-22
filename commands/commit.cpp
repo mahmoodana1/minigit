@@ -1,4 +1,6 @@
+#include "../utils/utils.h"
 #include "commands.h"
+
 #include <chrono>
 #include <ctime>
 #include <filesystem>
@@ -65,5 +67,6 @@ void commitChanges(const std::string &message) {
     file.close();
 
     // transfering committed files and folders
-    //  todo
+    transferDirToDir(fs::path(".minigit/addedFiles"),
+                     fs::path(commitPath / fs::path("files")));
 }
