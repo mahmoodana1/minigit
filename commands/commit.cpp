@@ -30,12 +30,18 @@ std::string generateUniqueId() {
 
 namespace fs = std::filesystem;
 void commitChanges(const std::string &message) {
+    if (fs::is_empty(".minigit/addedFiles")) {
+        std::cout << "You have to add files before making a commit\n";
+        return;
+    }
+
     std::string commitId = generateUniqueId();
 
     fs::path basePath = fs::path(".minigit/commits");
     fs::path commitPath = basePath / fs::path(commitId);
     fs::create_directory(commitPath);
     fs::create_directory(commitPath.string() + "/files");
+
     // creating the date string
     auto now = std::chrono::system_clock::now();
 
@@ -57,4 +63,7 @@ void commitChanges(const std::string &message) {
     file << "Message: " << message << '\n';
 
     file.close();
+
+    // transfering committed files and folders
+    //  todo
 }
