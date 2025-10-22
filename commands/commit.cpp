@@ -69,4 +69,8 @@ void commitChanges(const std::string &message) {
     // transfering committed files and folders
     transferDirToDir(fs::path(".minigit/addedFiles"),
                      fs::path(commitPath / fs::path("files")));
+
+    // restart the addedFiles directory
+    fs::remove_all(fs::path(".minigit/addedFiles"));
+    fs::create_directory(fs::path(".minigit/addedFiles"));
 }
