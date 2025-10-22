@@ -10,4 +10,4 @@ A lightweight Git clone built in C++ to understand how Git works internally.
 
 ## ⚙️ Build
 ```bash
-g++ main.cpp commands/*.cpp -o minigit
+g++ mini.cpp commands/*.cpp utils/*.cpp -o minigit
