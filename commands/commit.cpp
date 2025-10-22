@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <ios>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -65,6 +66,17 @@ void commitChanges(const std::string &message) {
     file << "Message: " << message << '\n';
 
     file.close();
+
+    // creating the log file
+    std::ofstream logFile(".minigit/logs/" + commitId + ".txt", std::ios::app);
+
+    if (!logFile.is_open()) {
+        std::cout << "Failed to open file\n";
+    }
+
+    logFile << "commit with ID: " << commitId << "\n";
+
+    logFile.close();
 
     // transfering committed files and folders
     transferDirToDir(fs::path(".minigit/addedFiles"),
